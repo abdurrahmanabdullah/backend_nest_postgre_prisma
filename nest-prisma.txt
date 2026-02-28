@@ -1,0 +1,29 @@
+if in prisma syntex erro then in .eslinttra.js file  inside rule past it =>  'prettier/prettier': 0,
+
+nest js 
+
+main.ts =>starting point
+app.controller.spec.ts=>use for testing
+app.controller.ts=> handle client request  
+app.service.ts=>business logic 
+app.module.ts=>call controller and service 
+
+create a users module in nestjs
+
+nest generate module users
+nest generate controller users
+nest generate service users
+
+prisma
+https://www.youtube.com/watch?v=RebA5J-rlwg&t=155s&ab_channel=WebDevSimplified
+
+ at first for migration prisma =>npx prisma migrate dev --name init
+
+1. after create schema.prisma file in cmd write command =>npx prisma migrate dev --name init
+2.npm i @prisma/client
+3.npx prisma generate
+
+
+in prisma folder 
+ prisma.module =>prismaservice  import here 
+

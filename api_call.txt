@@ -1,0 +1,167 @@
+---------------------
+"use client";
+import { authOptions } from "@/lib/auth";
+import { Auth, Session, User } from "@/types";
+import { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import Image from "next/image";
+import { IoShareOutline } from "react-icons/io5";
+import { IoPersonOutline } from "react-icons/io5";
+import bannerImg from "@/public/images/home-image.jpeg";
+import { IoIosSearch } from "react-icons/io";
+
+import HomeBannerSlider from "./component/HomeBannerSlider";
+
+import HomeCard2 from "@/app/[lang]/(welcome)/component/HomeTextCard";
+import { usePublicFetch } from "@/hooks/useAuthFetch";
+import { useEffect, useState } from "react";
+import DynamicHomeCard from "@/app/[lang]/(welcome)/component/DynamicHomeCard";
+import HomeTextCard from "@/app/[lang]/(welcome)/component/HomeTextCard";
+// export const metadata: Metadata = {
+//   title: "Welcome - KTTravel",
+//   description: "KTTravel",
+// };
+
+// Helper function to convert Session to Auth
+function sessionToAuth(session: Session | null): Auth {
+  if (!session) {
+    return { user: null };
+  }
+
+  return {
+    user: session.user as User,
+  };
+}
+
+export default async function WelcomePage() {
+  const publicFetch = usePublicFetch();
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await publicFetch("/spots");
+        const json = await response.json();
+        setData(json);
+        console.log("Fetched data:", json);
+      } catch (error) {
+        console.error("Error fetching spots:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [publicFetch]);
+
+  if (loading) return <div>Loading...</div>;
+
+  const firstImage = data?.[0]?.photos?.[0]?.url;
+  return (
+    <div className=" ">
+      {" "}
+      <HomeBannerSlider />
+      <div className=" mt-3 grid grid-cols-2  sm:grid-cols-2 md:grid-cols-3 ">
+        {/* ///--------------------- */}
+        <DynamicHomeCard
+          imageSrc={firstImage}
+          title="Marinpia Nihonkai "
+          imageHeight={140}
+          showHeart={true}
+          location="Niigata"
+          category="Aquarium"
+          love="123,456"
+        />{" "}
+        <DynamicHomeCard
+          imageSrc="/images/image2.png"
+          title="Spot name spot na "
+          imageHeight={122.85}
+          showHeart={true}
+          location="Niigata"
+          category="Aquarium"
+          love="123,456"
+        />{" "}
+        {/* /// */}
+        <DynamicHomeCard
+          imageSrc="/images/image1.png"
+          title="Takada castle site  park "
+          imageHeight={140}
+          location="Niigata"
+          category="Aquarium"
+          love="123,456"
+          showHeart={true}
+        />{" "}
+        <div className="-mt-4">
+          {" "}
+          <DynamicHomeCard
+            imageSrc="/images/image3.png"
+            title={
+              <>
+                Osaka recommend
+                <br />
+                BEST 10
+              </>
+            }
+            imageHeight={140}
+            location="Niigata"
+            love="123,334"
+            category="Aquarium"
+            showHeart={true}
+          />
+        </div>
+        {/*  */}
+        <DynamicHomeCard
+          imageSrc="/images/image3.png"
+          title={
+            <>
+              Osaka recommend
+              <br />
+              BEST 10
+            </>
+          }
+          imageHeight={140}
+          like="123,456"
+          tag="#summer #lantern #garden"
+          showHeart={true}
+        />{" "}
+        <DynamicHomeCard
+          imageSrc="/images/image3.png"
+          title="Spot name spot na"
+          imageHeight={140}
+          like="123,456"
+          tag="#新潟 #多彩な海洋生物が見られる"
+          showHeart={true}
+        />
+        <div className="-mt-2">
+          {" "}
+          <DynamicHomeCard
+            imageSrc="/images/image3.png"
+            title="Tsukiakari no niwa"
+            imageHeight={98.58}
+            like="123,456"
+            tag="#nightview #lantern #garden"
+            showHeart={true}
+          />
+        </div>
+        {/* Add the new HomeCard2 */}
+        <HomeTextCard
+          items={[
+            "Niigata Recommend",
+            "Toyama Winter",
+            "Ishikawa Autumn",
+            "Ishikawa with child",
+          ]}
+        />{" "}
+        <DynamicHomeCard
+          imageSrc="/images/image6.png"
+          imageHeight={200}
+          showHeart={true}
+        />
+        <DynamicHomeCard
+          imageSrc="/images/image7.png"
+          imageHeight={200}
+          showHeart={true}
+        />
+      </div>
+    </div>
+  );
+}
