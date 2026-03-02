@@ -1,0 +1,88 @@
+INSERT INTO spots (
+  id, name, description, address, latitude, longitude, prefecture, city, website_url,
+  phone_number, opening_hours, closing_days, access_info, barrier_free_info, fee,
+  google_map_url, travelko_url, best_season, seasonal_notes, instagram_url, x_url,
+  is_verified, is_active, like_count, created_at, updated_at, deleted_at,
+  user_id
+)
+VALUES
+  (gen_random_uuid(), 'Tokyo Tower', 'Iconic tower with an observation deck.',
+   '4-2-8 Shibakoen, Minato City, Tokyo', 35.6586, 139.7454, 'Tokyo', 'Minato',
+   'https://www.tokyotower.co.jp/', '+81 3-3433-5111', '09:00 - 23:00', 'None',
+   'Near Hamamatsucho Station', 'Wheelchair accessible', '500 yen',
+   'https://goo.gl/maps/abcdef123456', 'https://www.travelko.com/abcdef',
+   'Spring', 'Best enjoyed in spring when the flowers bloom.',
+   'https://instagram.com/tokyo_tower', 'https://x.com/tokyo_tower', true, true, 0,
+   NOW(), NOW(), NULL, NULL),
+  (gen_random_uuid(), 'Kyoto Imperial Palace', 'Historical imperial palace with beautiful gardens.',
+   '3 Kyotogyoen, Kamigyo Ward, Kyoto', 35.0278, 135.7800, 'Kyoto', 'Kamigyo',
+   'https://www.kunaicho.go.jp/', '+81 75-211-1215', '09:00 - 17:00', 'Mondays',
+   'Near Kyoto Imperial Park', 'Wheelchair accessible', 'Free entry',
+   'https://goo.gl/maps/abcdef654321', 'https://www.travelko.com/xyz789',
+   'Autumn', 'Famous for its autumn foliage.',
+   'https://instagram.com/kyoto_imperial_palace', 'https://x.com/kyoto_palace',
+   false, true, 12, NOW(), NOW(), NULL, NULL);
+
+/////-------------- for add photo 
+INSERT INTO photos (
+  id, url, caption, width, height, size, file_type, taking_date, 
+  source_url, credit, shooting_period, latitude, longitude, note, 
+  like_count, is_active, is_featured, created_at, updated_at, spot_id, 
+  user_id
+) 
+VALUES (
+  '901493f1-da0a-4db0-858f-2e3f7ec244ec', -- Dummy photo ID (UUID)
+  'https://i.ibb.co/com/your-image.jpg', -- Photo URL
+  'A beautiful sunset by the lake', -- Caption
+  1920, -- Width
+  1080, -- Height
+  2048, -- Size in bytes
+  'image/jpeg', -- File type
+  '2024-08-01 18:30:00', -- Taking date
+  'https://i.ibb.co/com/your-image.jpg', -- Source URL
+  'John Doe', -- Credit
+  'Summer 2024', -- Shooting period
+  35.6895, -- Latitude
+  139.6917, -- Longitude
+  'Captured during travel in Japan', -- Note
+  0, -- Like count
+  true, -- is_active flag
+  false, -- is_featured flag
+  CURRENT_TIMESTAMP, -- Created at timestamp
+  CURRENT_TIMESTAMP, -- Updated at timestamp
+  '91ad045d-508d-4e2e-bab8-12a93e6ca319', --  Spot ID (replace with valid spot ID)
+  'bcc865b3-041f-4f96-ab86-4982272f6a18' --  User ID (replace with valid user ID)
+);
+////--------------insert category 
+-- Insert a category
+INSERT INTO categories (
+  id, name, description, icon, created_at, updated_at
+) 
+VALUES (
+  'c1a0f2e1-1234-4a1a-8ab3-1f57b0e5aa000', -- randomly  Category ID (UUID)
+  'Abdullah', -- Category Name
+  'Sunny and sandy coastal destinations', -- Category Description
+  'beach.png', -- Icon (image file representing the category)
+  CURRENT_TIMESTAMP, -- Created At Timestamp
+  CURRENT_TIMESTAMP -- Updated At Timestamp
+);
+////---------------insert sport category 
+
+-- Insert category-spot relations for Tokyo Tower spot with explicit UUIDs
+-- Linking Tokyo Tower to the Beaches category
+INSERT INTO category_spots (id, category_id, spot_id, created_at, updated_at)
+VALUES
+('d1c0a111-1234-4ccc-baaa-000000000001', 'c1a0f2e1-1234-4a1a-8ab3-1f57b0e5aa01', '91ad045d-508d-4e2e-bab8-12a93e6ca319', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);-- first er ta category spots er  id then category_id then spot id 
+
+-- Linking Tokyo Tower to the Mountains category
+INSERT INTO category_spots (id, category_id, spot_id, created_at, updated_at)
+VALUES
+('d1c0a111-1234-4ccc-baaa-000000000002', 'c1a0f2e1-1234-4a1a-8ab3-1f57b0e5aa02', '91ad045d-508d-4e2e-bab8-12a93e6ca319', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Linking Tokyo Tower to the Cities category
+INSERT INTO category_spots (id, category_id, spot_id, created_at, updated_at)
+VALUES
+('d1c0a111-1234-4ccc-baaa-000000000003', 'c1a0f2e1-1234-4a1a-8ab3-1f57b0e5aa03', '91ad045d-508d-4e2e-bab8-12a93e6ca319', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+////-delete photo 
+DELETE FROM photos
+WHERE id = '901493f1-da0a-4db0-858f-2e3f7ec244ec';

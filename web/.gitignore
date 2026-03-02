@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment variables
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+# .env*
+
+# Next.js build output
+.next/
+out/
+
+# Next.js caches
+.next/cache
+.next/static
+
+# Vercel deployment
+.vercel
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Editor settings
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
+
+# Mac system files
+.DS_Store
+
+# Miscellaneous
+*.pem
+# *.mp4
+# *.jpg
+# *.png
+
+# Next.js Tailwind CSS jit mode
+.tailwind-cache/

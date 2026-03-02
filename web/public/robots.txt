@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Disallow authenticated-only paths
+Disallow: /*/dashboard
+Disallow: /*/profile
+Disallow: /*/subscription
+Disallow: /*/editor
+Disallow: /*/recent-chat
+Disallow: /*/success
+Disallow: /*/[userAppId]
+Disallow: /*/code-panel
+
+# Sitemap
+Sitemap: https://kttravel.com/sitemap.xml
