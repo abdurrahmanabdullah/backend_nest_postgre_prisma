@@ -6,7 +6,6 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
-import * as basicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { PrismaService } from './prisma/prisma.service';
@@ -79,13 +78,6 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.use(
-    ['/api/docs', '/api/docs-json'], // Protect Swagger docs and JSON
-    basicAuth({
-      users: { admin: 'Admin@017' }, // Replace 'admin' and 'password' with your credentials
-      challenge: true,
-    }),
-  );
 
   // Configure Swagger
   const config = new DocumentBuilder()

@@ -11,6 +11,7 @@ async function main() {
     const admin = await prisma.user.upsert({
         where: { email: adminEmail },
         update: {
+            role: 'admin',
             password: hashedPassword,
         },
         create: {
@@ -23,14 +24,10 @@ async function main() {
         },
     });
 
-    console.log({ admin });
+    console.log('Admin user ensured:');
+    console.log(JSON.stringify({ email: admin.email, role: admin.role }, null, 2));
 }
 
 main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+    .catch(e => console.error(e))
+    .finally(async () => await prisma.$disconnect());

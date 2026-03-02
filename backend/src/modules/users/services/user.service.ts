@@ -34,7 +34,6 @@ export class UserService {
           email: true,
           role: true,
           photo: true,
-          emailVerified: true,
           createdAt: true,
           isActive: true,
         },

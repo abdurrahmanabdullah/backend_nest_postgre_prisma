@@ -14,7 +14,7 @@ import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { AuthMiddleware } from '@/auth/middleware/auth.middleware';
 import { AppConfigService } from '@/config/app-config.service';
 import { AppConfigModule } from '@/config/app-config.module';
-
+import { ProductsModule } from './modules/products/products.module';
 @Module({
   imports: [
     // Core modules first
@@ -24,6 +24,7 @@ import { AppConfigModule } from '@/config/app-config.module';
     // Feature modules
     AuthModule,
     UserModule,
+    ProductsModule,
   ],
   providers: [
     {

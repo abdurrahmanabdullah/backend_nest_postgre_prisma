@@ -10,9 +10,9 @@ import { Prisma, PrismaClient } from '@prisma/client';
 @Injectable()
 export class PrismaService
   extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+  implements OnModuleInit, OnModuleDestroy {
   private isShutdownHandlerRegistered = false;
+  private _extendedClient: any;
 
   constructor() {
     super({
@@ -25,70 +25,62 @@ export class PrismaService
     });
 
     // Initialize client extensions for soft delete
-    const softDeleteExtension = Prisma.defineExtension((client) => {
-      return client.$extends({
-        query: {
-          $allModels: {
-            async findUnique({ args, query }) {
-              // Only add deletedAt: null if it's not explicitly set
-              if (
-                args.where &&
-                !Object.keys(args.where).includes('deletedAt')
-              ) {
-                args.where = { ...args.where, deletedAt: null };
-              }
-              return query(args);
-            },
-            async findFirst({ args, query }) {
-              if (
-                args.where &&
-                !Object.keys(args.where).includes('deletedAt')
-              ) {
-                args.where = { ...args.where, deletedAt: null };
-              }
-              return query(args);
-            },
-            async findMany({ args, query }) {
-              if (
-                !args.where ||
-                !Object.keys(args.where).includes('deletedAt')
-              ) {
-                args.where = { ...args.where, deletedAt: null };
-              }
-              return query(args);
-            },
-            async count({ args, query }) {
-              if (
-                !args.where ||
-                !Object.keys(args.where).includes('deletedAt')
-              ) {
-                args.where = { ...args.where, deletedAt: null };
-              }
-              return query(args);
-            },
-            async delete({ model, args }) {
-              return client[model].update({
-                ...args,
-                data: {
-                  deletedAt: new Date(),
-                },
-              });
-            },
-            async deleteMany({ model, args }) {
-              return client[model].updateMany({
-                ...args,
-                data: {
-                  deletedAt: new Date(),
-                },
-              });
-            },
+    this._extendedClient = this.$extends({
+      query: {
+        $allModels: {
+          async findUnique({ args, query }) {
+            if (args.where && !Object.keys(args.where).includes('deletedAt')) {
+              args.where = { ...args.where, deletedAt: null };
+            }
+            return query(args);
+          },
+          async findFirst({ args, query }) {
+            if (args.where && !Object.keys(args.where).includes('deletedAt')) {
+              args.where = { ...args.where, deletedAt: null };
+            }
+            return query(args);
+          },
+          async findMany({ args, query }) {
+            if (!args.where || !Object.keys(args.where).includes('deletedAt')) {
+              args.where = { ...args.where, deletedAt: null };
+            }
+            return query(args);
+          },
+          async count({ args, query }) {
+            if (!args.where || !Object.keys(args.where).includes('deletedAt')) {
+              args.where = { ...args.where, deletedAt: null };
+            }
+            return query(args);
+          },
+          async delete({ model, args }) {
+            return (this as any)[model].update({
+              ...args,
+              data: {
+                deletedAt: new Date(),
+              },
+            });
+          },
+          async deleteMany({ model, args }) {
+            return (this as any)[model].updateMany({
+              ...args,
+              data: {
+                deletedAt: new Date(),
+              },
+            });
           },
         },
-      });
+      },
     });
 
-    // Apply the extension
-    this.$extends(softDeleteExtension);
+    // Proxy model access to the extended client
+    return new Proxy(this, {
+      get: (target, prop) => {
+        if (prop in target._extendedClient && typeof (target._extendedClient as any)[prop] === 'object') {
+          return (target._extendedClient as any)[prop];
+        }
+        return (target as any)[prop];
+      },
+    }) as any;
   }
 
   async onModuleInit() {
@@ -102,9 +94,7 @@ export class PrismaService
   async enableShutdownHooks(app: INestApplication) {
     if (this.isShutdownHandlerRegistered) return;
 
-    // Handle process termination and cleanup
     const signals = ['SIGINT', 'SIGTERM', 'SIGUSR2'] as const;
-
     for (const signal of signals) {
       process.on(signal, async () => {
         await this.$disconnect();
@@ -126,15 +116,15 @@ export class PrismaService
             typeof key === 'string' &&
             !key.startsWith('$') &&
             !['_', 'constructor'].includes(key) &&
-            typeof this[key] === 'object' &&
-            this[key] !== null &&
-            'deleteMany' in this[key]
+            typeof (this as any)[key] === 'object' &&
+            (this as any)[key] !== null &&
+            'deleteMany' in (this as any)[key]
           );
         },
       );
 
       return Promise.all(
-        modelNames.map((modelName) => this[modelName as string].deleteMany()),
+        modelNames.map((modelName) => (this as any)[modelName as string].deleteMany()),
       );
     } catch (error) {
       console.error('Error cleaning database:', error);
