@@ -37,6 +37,8 @@ export class BooksService {
       ...fakeDatabase[bookIndex],
       ...updateBookDto,
     };
+    ///---copy object properties
+    //merge objects
     fakeDatabase[bookIndex] = updatedBook;
     return updatedBook;
   }
@@ -47,5 +49,6 @@ export class BooksService {
       throw new NotFoundException(`Book with ID ${id} not found`);
     }
     fakeDatabase.splice(bookIndex, 1);
+    /// splice is used for Removes items from an array.
   }
 }

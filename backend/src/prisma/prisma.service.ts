@@ -1,4 +1,3 @@
-// src/prisma/prisma.service.ts
 import {
   INestApplication,
   Injectable,
@@ -12,75 +11,16 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy {
   private isShutdownHandlerRegistered = false;
-  private _extendedClient: any;
 
   constructor() {
     super({
-      log: ['error'],
+      log: ['error', 'warn'],
       datasources: {
         db: {
           url: process.env.DATABASE_URL,
         },
       },
     });
-
-    // Initialize client extensions for soft delete
-    this._extendedClient = this.$extends({
-      query: {
-        $allModels: {
-          async findUnique({ args, query }) {
-            if (args.where && !Object.keys(args.where).includes('deletedAt')) {
-              args.where = { ...args.where, deletedAt: null };
-            }
-            return query(args);
-          },
-          async findFirst({ args, query }) {
-            if (args.where && !Object.keys(args.where).includes('deletedAt')) {
-              args.where = { ...args.where, deletedAt: null };
-            }
-            return query(args);
-          },
-          async findMany({ args, query }) {
-            if (!args.where || !Object.keys(args.where).includes('deletedAt')) {
-              args.where = { ...args.where, deletedAt: null };
-            }
-            return query(args);
-          },
-          async count({ args, query }) {
-            if (!args.where || !Object.keys(args.where).includes('deletedAt')) {
-              args.where = { ...args.where, deletedAt: null };
-            }
-            return query(args);
-          },
-          async delete({ model, args }) {
-            return (this as any)[model].update({
-              ...args,
-              data: {
-                deletedAt: new Date(),
-              },
-            });
-          },
-          async deleteMany({ model, args }) {
-            return (this as any)[model].updateMany({
-              ...args,
-              data: {
-                deletedAt: new Date(),
-              },
-            });
-          },
-        },
-      },
-    });
-
-    // Proxy model access to the extended client
-    return new Proxy(this, {
-      get: (target, prop) => {
-        if (prop in target._extendedClient && typeof (target._extendedClient as any)[prop] === 'object') {
-          return (target._extendedClient as any)[prop];
-        }
-        return (target as any)[prop];
-      },
-    }) as any;
   }
 
   async onModuleInit() {
